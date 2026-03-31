@@ -1,0 +1,24 @@
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      golang-org:
+        patterns:
+          - "golang.org/*"
+      all-go-deps:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "golang.org/*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns:
+          - "*"
