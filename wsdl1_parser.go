@@ -80,15 +80,27 @@ func (p *wsdl1Parser) parseOperation(opNode *xmlquery.Node, portTypeName string)
 		Name: opName,
 	}
 
-	// Find corresponding binding operation to get SOAPAction, binding name and message parts (optional)
+	// Default to document style per WSDL 1.1 spec
+	op.Style = StyleDocument
+
+	// Find corresponding binding operation to get SOAPAction, binding name,
+	// style and message parts (optional)
 	bindingOp := p.findBindingOperation(portTypeName, opName)
 	if bindingOp != nil {
-		if soapActionNode := xmlquery.FindOne(bindingOp, "./soap:operation|./soap12:operation"); soapActionNode != nil {
-			op.SOAPAction = soapActionNode.SelectAttr("soapAction")
-		}
-		// Get binding name from parent binding node
+		// Resolve style: binding-level default, overridden by operation-level
 		if bindingNode := xmlquery.FindOne(bindingOp, "ancestor::wsdl:binding|ancestor::binding"); bindingNode != nil {
 			op.Binding = bindingNode.SelectAttr("name")
+			if soapBindingNode := xmlquery.FindOne(bindingNode, "./soap:binding|./soap12:binding"); soapBindingNode != nil {
+				if s := soapBindingNode.SelectAttr("style"); s != "" {
+					op.Style = s
+				}
+			}
+		}
+		if soapOpNode := xmlquery.FindOne(bindingOp, "./soap:operation|./soap12:operation"); soapOpNode != nil {
+			op.SOAPAction = soapOpNode.SelectAttr("soapAction")
+			if s := soapOpNode.SelectAttr("style"); s != "" {
+				op.Style = s
+			}
 		}
 	}
 

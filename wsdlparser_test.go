@@ -108,6 +108,37 @@ func TestParseWSDL1Operations(t *testing.T) {
 	}
 }
 
+func TestParseWSDL1RPCStyle(t *testing.T) {
+	wsdlPath := filepath.Join("testdata", "wsdl1-soap11-rpc", "service.wsdl")
+	parser, err := NewWSDLParser(wsdlPath)
+	require.NoError(t, err)
+
+	assert.Equal(t, WSDL1, parser.GetVersion())
+
+	ops := parser.GetOperations()
+	require.Contains(t, ops, "getPetById")
+	require.Contains(t, ops, "getPetByName")
+
+	// getPetById declares style="rpc" at the operation level
+	byId := ops["getPetById"]
+	assert.Equal(t, StyleRPC, byId.Style, "operation-level style should be rpc")
+	assert.Equal(t, "getPetById", byId.SOAPAction)
+
+	// getPetByName inherits style from the binding (soap:operation omits style)
+	byName := ops["getPetByName"]
+	assert.Equal(t, StyleRPC, byName.Style, "binding-level style should be inherited")
+}
+
+func TestParseWSDL1DocumentStyleDefault(t *testing.T) {
+	wsdlPath := filepath.Join("testdata", "wsdl1-soap11", "service.wsdl")
+	parser, err := NewWSDLParser(wsdlPath)
+	require.NoError(t, err)
+
+	for name, op := range parser.GetOperations() {
+		assert.Equal(t, StyleDocument, op.Style, "operation %s should default to document style", name)
+	}
+}
+
 func TestParseWSDL2Operations(t *testing.T) {
 	wsdlPath := filepath.Join("testdata", "wsdl2-soap12", "service.wsdl")
 	parser, err := NewWSDLParser(wsdlPath)

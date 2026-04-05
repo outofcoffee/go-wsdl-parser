@@ -99,6 +99,9 @@ func (p *wsdl2Parser) parseOperation(bindingOperation *xmlquery.Node, interfaceN
 	op := &Operation{
 		Name:    interfaceOperation.SelectAttr("name"),
 		Binding: bindingName,
+		// WSDL 2.0 uses message-exchange patterns rather than the WSDL 1.1
+		// document/rpc style distinction; expose document for API symmetry.
+		Style: StyleDocument,
 	}
 
 	// Parse input message
