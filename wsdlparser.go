@@ -52,6 +52,13 @@ type BaseWSDLParser struct {
 	targetNamespace string
 }
 
+// Operation style constants. Mirrors the WSDL 1.1 soap:binding / soap:operation
+// style attribute values.
+const (
+	StyleDocument = "document"
+	StyleRPC      = "rpc"
+)
+
 // Operation represents a WSDL operation
 type Operation struct {
 	Name       string
@@ -60,6 +67,11 @@ type Operation struct {
 	Output     *wsdlmsg.Message
 	Fault      *wsdlmsg.Message
 	Binding    string
+	// Style is the SOAP binding style for this operation, either
+	// "document" (default) or "rpc". Resolved from the soap:operation
+	// element's style attribute, falling back to the enclosing
+	// soap:binding element.
+	Style string
 }
 
 func (p *BaseWSDLParser) GetWSDLPath() string {
