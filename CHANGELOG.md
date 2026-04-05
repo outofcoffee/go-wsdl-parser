@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.2.0] - 2026-04-05
+### Added
+- feat: expose SOAP binding style on operations (#4)
+
+### Changed
+- build: add since config
+- docs: add changelog
+
 ## [0.1.0] - 2026-03-31
 ### Added
 - feat: add WSDL parser library with XSD and message support (#1)
@@ -16,5 +24,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Other
 - Initial commit
-
-
